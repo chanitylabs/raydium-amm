@@ -4,10 +4,10 @@
 
 ## Program Deployments
 
-| Environment         |   [PROGRAM](/program)                          |
-| ------------------- | ---------------------------------------------- |
-| Mainnet             | `675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8` |
-| Devnet              | `HWy1jotHpo6UqeQxx49dpYYdQB8wj9Qk9MdxwjLvDHB8` |
+| Environment | [PROGRAM](/program)                            |
+| ----------- | ---------------------------------------------- |
+| Mainnet     | `675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8` |
+| Devnet      | `HWy1jotHpo6UqeQxx49dpYYdQB8wj9Qk9MdxwjLvDHB8` |
 
 ## Overview
 
@@ -16,26 +16,33 @@
 - **The dev document is [here](https://github.com/raydium-io/raydium-docs/tree/master/dev-resources)**
 
 ## Environment Setup
+
 1. Install [Rust](https://www.rust-lang.org/tools/install).
 2. Install [Solana](https://docs.solana.com/cli/install-solana-cli-tools) and then run `solana-keygen new` to create a keypair at the default location.
 
 ## Build
 
 Clone the repository and enter the source code directory.
+
 ```bash
 git clone https://github.com/raydium-io/raydium-amm
 cd raydium-amm/program
 ```
 
 ### Mainnet Build
+
 ```bash
 cargo build-sbf
 ```
+
 ### Devnet Build
+
 ```bash
 cargo build-sbf --features devnet
 ```
+
 ### Localnet Build
+
 You must update these pubkeys in the "config_feature" as yours over the localnet feature before build;
 
 ```bash
@@ -45,17 +52,20 @@ cargo build-sbf --features localnet
 After building, the smart contract files are all located in the target directory.
 
 ## Deploy
+
 ```bash
 solana deploy
 ```
+
 Attention, check your configuration and confirm the environment you want to deploy.
 
 ## QuickStart
 
 1. You must have an openbook market not associated to any amm pool if you want to initialize a new amm pool.
-  And you can refer to [ListMarket](https://github.com/openbook-dex/program/blob/master/dex/crank/src/lib.rs#L349) to create a new market.
+   And you can refer to [ListMarket](https://github.com/openbook-dex/program/blob/master/dex/crank/src/lib.rs#L349) to create a new market.
 
 2. Add dependencies in your Cargo.toml
+
 ```rust
 [dependencies]
 [features]
@@ -80,6 +90,7 @@ clap = { version = "4.1.8", features = ["derive"] }
 ```
 
 3. Import dependent libraries
+
 ```rust
 #![allow(dead_code)]
 use anyhow::{Ok, Result};
@@ -95,6 +106,7 @@ use {
 ```
 
 4. Custom configuration parameters in your code.
+
 ```rust
 // default config
 let mut config = common_types::CommonConfig::default();
@@ -107,6 +119,7 @@ config.set_slippage(50);
 ```
 
 5. Constructing a signed storage object.
+
 ```rust
 let payer = common_utils::read_keypair_file(&config.wallet())?;
 let fee_payer = payer.pubkey();
@@ -118,6 +131,7 @@ if !signing_keypairs.contains(&payer) {
 ```
 
 6. initialize a new amm pool with an associate openbook market
+
 ```rust
 // build initialize pool instruction
 let subcmd = AmmCommands::CreatePool {
@@ -134,6 +148,7 @@ let instruction = amm_cli::process_amm_commands(subcmd, &config).unwrap();
 ```
 
 3. deposit assets to an amm pool
+
 ```rust
 // build deposit instruction
 let subcmd = AmmCommands::Deposit {
@@ -147,10 +162,13 @@ let subcmd = AmmCommands::Deposit {
 };
 let instruction = amm_cli::process_amm_commands(subcmd, &config).unwrap();
 ```
+
 ### Note
+
 If the parameter of the deposit_token_coin, deposit_token_pc or recipient_token_lp is None, it will be ATA token by default.
 
 4. withdraw assets from amm pool
+
 ```rust
 // build withdraw instruction
 let subcmd = AmmCommands::Withdraw {
@@ -163,10 +181,13 @@ let subcmd = AmmCommands::Withdraw {
 };
 let instruction = amm_cli::process_amm_commands(subcmd, &config).unwrap();
 ```
+
 ### Note
+
 If the parameter of the withdraw_token_lp, recipient_token_coin or recipient_token_pc is None, it will be ATA token by default.
 
 5. swap
+
 ```rust
 // build swap instruction
 let subcmd = AmmCommands::Swap {
@@ -178,7 +199,24 @@ let subcmd = AmmCommands::Swap {
 };
 let instruction = amm_cli::process_amm_commands(subcmd, &config).unwrap();
 ```
+
 ### Note
+
 If the parameter of the user_output_token is None, it will be ATA token by default.
 
 For more information, you can see the repo [raydium-library](https://github.com/raydium-io/raydium-library)
+
+## Update files to bump version of solana libs
+
+```bash
+        modified:   Cargo.lock
+        modified:   README.md
+        modified:   program/Cargo.toml
+        deleted:    program/src/entrypoint.rs
+        deleted:    program/src/invokers.rs
+        modified:   program/src/lib.rs
+        deleted:    program/src/log.rs
+        modified:   program/src/math.rs
+        deleted:    program/src/processor.rs
+        modified:   program/src/state.rs
+```
